@@ -19,7 +19,10 @@ Reproduce: `benchmark/weight/measure.sh` (TinyGo 0.41.1, `-target wasm -opt z -n
 
 Programs `all_*` and `mall_*` use `Contains`, `HasPrefix`, `HasSuffix`, `Index`, `LastIndex`, `Split`, `TrimSpace`,
 `TrimPrefix`, `TrimSuffix`, `ToLower`, `ToUpper`, `Repeat`, `Count`, `ReplaceAll` and `Join`/`JoinSlice` together; `mall_*`
-also call `fmt.Sprintf` and `fmt.Err`, as a real app does.
+also call `fmt.Sprintf` and `fmt.Err`, as a real app does. Baseline `mall_none` (same app, no string helpers): 61.2 KB.
+So in a real app the stdlib `strings` set **adds 10.0 KB** and the webtyp/fmt copies **add 14.8 KB**. TinyGo drops exported
+functions nobody calls, so deleting the copies does not make `webtyp/fmt` itself lighter: the saving (−4.8 KB) appears only in
+apps that use string helpers.
 
 ## Comparing errors: the hidden 27 KB
 
