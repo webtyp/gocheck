@@ -12,9 +12,14 @@ Reproduce: `benchmark/weight/measure.sh` (TinyGo 0.41.1, `-target wasm -opt z -n
 | `encoding/json` | 333 KB | 56 KB | — | **forbidden** → `webtyp.com/json` |
 | `reflect` | +15 KB over empty | — | — | **forbidden** |
 | `strconv` | 22 KB | 54 KB | 63.0 KB vs 56.3 KB | **forbidden** → `fmt.Convert` (−7 KB) |
-| `strings` | 26 KB | 50 KB | 63.5 KB vs 63.7 KB | allowed: no difference |
+| `strings` (3 functions) | 26 KB | 50 KB | 63.5 KB vs 63.7 KB | allowed: no difference |
+| `strings` (the 15 helpers webtyp/fmt duplicates) | 33.0 KB | 61.9 KB | **71.3 KB vs 76.0 KB** | allowed, and **lighter** than the webtyp/fmt copies (−4.7 KB) |
 | `errors.New`, `errors.AsType` | +0 KB | — | — | allowed |
 | `maps` | +0.7 KB over a plain map | — | — | allowed (using maps at all is a separate rule: skill **wasm**) |
+
+Programs `all_*` and `mall_*` use `Contains`, `HasPrefix`, `HasSuffix`, `Index`, `LastIndex`, `Split`, `TrimSpace`,
+`TrimPrefix`, `TrimSuffix`, `ToLower`, `ToUpper`, `Repeat`, `Count`, `ReplaceAll` and `Join`/`JoinSlice` together; `mall_*`
+also call `fmt.Sprintf` and `fmt.Err`, as a real app does.
 
 ## Comparing errors: the hidden 27 KB
 
